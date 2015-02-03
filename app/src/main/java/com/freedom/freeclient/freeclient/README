@@ -1,0 +1,40 @@
+*** You need to install JSch Library  >> "http://sourceforge.net/projects/jsch/files/jsch/0.1.51/jsch-0.1.51.zip/download"
+
+*** You need to give networking permission in the Android manifest file.
+
+*** Example Usage
+
+***    // Path to KEY file
+    String filePath = Environment.getExternalStorageDirectory().getAbsolutePath()+"/";   
+   
+***    // KEY file name
+    String fileName = "id_rsa2";
+     
+***    // KEYPath and KEYName combined
+    String actualFile = filePath + fileName;	
+
+
+***    // You should run passwordless-ssh as AsyncTask
+    new AsyncTask<Integer, Void, Void>(){
+        @Override
+        protected Void doInBackground(Integer... params) {
+        	try {
+// Create instance
+        		PasswordlessSSHManager instance = new PasswordlessSSHManager("user", actualFile, "234561", "192.168.1.164", ""); 
+// Connect
+        		String errorMessage = instance.connect(); 
+// Optional print error messages.
+        		if(errorMessage != null)
+        		    {
+        		       System.out.println(errorMessage);
+        		    }
+// Send command to remote host
+        		    String result = instance.sendCommand("ls -l /var/log > /home/user/Desktop/Vdeneme.txt"); 
+// Close instance
+        		    instance.close();
+        	} catch (Exception e) {
+        		e.printStackTrace();
+        		}
+        	return null;        		
+        	}
+        }.execute(1);

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Distributed Proxy</string>
+    <string name="hello_world">Welcome to our distributed proxy system!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_settings">SettingsActivity</string>
+
+    <string-array name="countries">
+        <item>Nigeria</item>
+        <item>Venus</item>
+        <item>Earth</item>
+        <item>Mars</item>
+        <item>Jupiter</item>
+        <item>Saturn</item>
+        <item>Uranus</item>
+        <item>Neptune</item>
+    </string-array>
+
+    <string name="title_activity_connection_activity2">ConnectionActivity2</string>
+    <string name="title_activity_connect">ConnectActivity</string>
+
+</resources>
