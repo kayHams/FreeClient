@@ -32,8 +32,8 @@ public class Util {
     static String inputLine;
     static String proxyUrl;
 
-    public static void writeToClientFile(String real_country, String choosen_country, String written_ip, String speed, Context context ){
-        File f = new File(Config.getSendFile(context));
+    public static void writeToClientFile(String real_country, String chosen_country, String written_ip, String speed, Context context ){
+        File f = new File(Config.getSendFile());
         FileOutputStream fos = null;
         try {
             fos = new FileOutputStream(f);
@@ -52,7 +52,7 @@ public class Util {
             f.createNewFile();
 
             out.append(real_country + "+");
-            out.append(choosen_country + "+");
+            out.append(chosen_country + "+");
             out.append(written_ip + "+");
             out.append(speed);
             out.close();
@@ -64,8 +64,14 @@ public class Util {
 
     }
 
-    public static String readFromProxyFile(File proxy){
+    public static String readFromProxyFile(File proxy, Context context){
         try{
+
+            if(Config.isInternalStorage()){
+
+                Scanner in = new Scanner(context.openFileInput(proxy.getName()));
+                return in.nextLine();
+            }
 
             FileReader fr = new FileReader(proxy);
             BufferedReader br = new BufferedReader(fr);
@@ -77,7 +83,6 @@ public class Util {
         }
 
         return proxyUrl;
-
     }
 
     public static void writeToFile(String content, String filePath, boolean append, Context context) throws IOException {
@@ -119,17 +124,23 @@ public class Util {
         Properties properties = new Properties();
         try {
 
-            File f = new File(filename);
+            if(Config.isInternalStorage()){
+                File f = new File(filename);
+                context.openFileOutput(f.getName(), Context.MODE_PRIVATE);
+                properties.load(context.openFileInput(f.getName()));
+            }else{
+                File f = new File(filename);
 
-            if(!new File(f.getParent()).exists()){
-                new File(f.getParent()).mkdir();
+                if(!new File(f.getParent()).exists()){
+                    new File(f.getParent()).mkdir();
+                }
+
+                if(!f.exists()){
+                    writeToFile("",filename,false,context);
+                }
+
+                properties.load(new FileInputStream(f));
             }
-
-            if(!f.exists()){
-                writeToFile("",filename,false);
-            }
-
-            properties.load(new FileInputStream(f));
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -137,8 +148,12 @@ public class Util {
         return properties;
     }
 
-    public static void saveProperties(Properties props, String filename) throws IOException, FileNotFoundException {
-        props.store(new FileOutputStream(new File(filename)),"");
+    public static void saveProperties(Properties props, String filename, Context context) throws IOException, FileNotFoundException {
+        if(Config.isInternalStorage()){
+            props.store(context.openFileOutput(new File(filename).getName(), Context.MODE_PRIVATE),"");
+        }else{
+            props.store(new FileOutputStream(new File(filename)),"");
+        }
     }
     public static String  returnIp() {
         try {

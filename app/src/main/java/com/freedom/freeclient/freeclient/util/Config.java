@@ -24,9 +24,12 @@ public class Config {
     public final static String user = "QL0";
     public final static String host = "192.168.99.1";
     private static boolean internalStorage = true;
-
-    public static String getInfoFilePath(Context context){
-        return getStorageDir(context) + sep + APP_DIR + sep  + INFO_FILE_NAME;
+    private static String storageDir;
+    public static String getInfoFilePath(){
+        if(isInternalStorage()){
+            return getStorageDir() + sep  + INFO_FILE_NAME;
+        }
+        return getStorageDir() + sep + APP_DIR + sep  + INFO_FILE_NAME;
     }
 
     public static String getActualFile(Context context) {
@@ -34,35 +37,36 @@ public class Config {
                 context.getResources().getIdentifier("id_rsa",
                         "raw", context.getPackageName()));
 
-        String fStr = Config.getStorageDir(context) + sep + fileName;
+        String fStr = Config.getStorageDir() + sep + fileName;
 
 
         if(!new File(fStr).exists()){
             try {
-                Util.writeToFile(ins,Config.getStorageDir(context) + sep + fileName);
+                Util.writeToFile(ins,Config.getStorageDir() + sep + fileName,context);
             } catch (IOException e) {
                 e.printStackTrace();//USe android log here
             }
         }
-        return getStorageDir(context) + sep  + fileName;
+        return getStorageDir() + sep  + fileName;
     }
 
-    public static String getSendFile(Context c) {
-        return getStorageDir(c) + sep  + SSH_FILE_NAME;
+    public static String getSendFile() {
+        return getStorageDir() + sep  + SSH_FILE_NAME;
     }
-    //TODO: change this to set storage directory. Call it only once at beginning of main. And provide a separate getStorageDir()
-    public static String getStorageDir(Context context){
+    public static String getStorageDir(){
+       return storageDir;
+    }
+    public static void initStorage(Context context){
         String state = Environment.getExternalStorageState();
         if (Environment.MEDIA_MOUNTED.equals(state)) {
             internalStorage = false;
-            return Environment.getExternalStorageDirectory().getPath();
+            storageDir = Environment.getExternalStorageDirectory().getPath();
         }
 
         internalStorage = true;
         //external not available so use internal
-        return context.getFilesDir().getParentFile().getPath();
+        storageDir = context.getFilesDir().getParentFile().getPath();
     }
-
     public static boolean isInternalStorage() {
         return internalStorage;
     }

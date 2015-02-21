@@ -76,22 +76,32 @@ public class SettingsActivity extends ActionBarActivity {
         Country country = (Country) spinner.getSelectedItem();
         StringBuilder buf = new StringBuilder();
 
-        final Properties props = Util.getProperties(Config.getInfoFilePath(this));
+        final Properties props = Util.getProperties(Config.getInfoFilePath(),this);
         props.put("country", country.getId());
-        final Context c = this;
-        new Thread(new Runnable(){
-            public void run(){
-                try {
-                    Util.saveProperties(props, Config.getInfoFilePath(c));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
 
-        finish();
+        new SaveAsync(props).execute();
+
     }
+    class SaveAsync extends AsyncTask<Void, Void, Void> {
+        private Properties props;
+        SaveAsync(Properties props){
+            this.props = props;
+        }
+        protected Void doInBackground(Void... params) {
+            try {
+                Util.saveProperties(props, Config.getInfoFilePath(),SettingsActivity.this);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
 
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            setResult(RESULT_OK, getIntent());
+            finish();
+        }
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.

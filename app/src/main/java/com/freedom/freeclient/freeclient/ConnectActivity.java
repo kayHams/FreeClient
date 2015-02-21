@@ -27,73 +27,83 @@ import java.util.Properties;
 
 
 public class ConnectActivity extends ActionBarActivity {
-    File proxyFile = new File(Config.getStorageDir(this) + Config.sep + "proxy.txt");
-    File clientFile = new File(Config.getSendFile(this));
-
+    File proxyFile = new File(Config.getStorageDir() + Config.sep + "proxy.txt");
+    File clientFile = new File(Config.getSendFile());
+    ProgressDialog dialog;
+    private static final int SETTINGS_REQUEST =1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_connect);
-        final ProgressDialog dialog = ProgressDialog.show(this, "Please wait..", "Connecting...", true);
 
-        final Properties props = Util.getProperties(Config.getInfoFilePath(this));
+
+        final Properties props = Util.getProperties(Config.getInfoFilePath(), this);
 
         // check if the user has entered their setting information, if not, go to settingsActivity, if yes, connect to iodine
         if(props.get("country") == null || props.get("country").equals("") ){
             Intent settingsIntent = new Intent(this, SettingsActivity.class);
-            startActivity(settingsIntent);
+            startActivityForResult(settingsIntent, SETTINGS_REQUEST);
         }else{
-            Log.e("DEBUG_MSG", "DO nothing, just testing");
-            //Log.e("DEBUG_MSG", Config.storageDir());
+            dialog = ProgressDialog.show(this, "Please wait..", "Connecting...", true);
+            Log.i("DEBUG_MSG", "DO nothing, just testing");
+            new CreateConnection(props).execute(1);
 
         }
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                connect();
-                new FileAsync().execute(1);
-            }
 
-        });
-        t.start();
     }
 
-    public boolean connect(){
-        final Context context = ConnectActivity.this;
-        new Thread(new Runnable() {
-            public void run() {
-                final Properties props = Util.getProperties(Config.getInfoFilePath(context));
-                String country_code = (String) props.get("country");
-
-                String ip = Util.returnIp();
-                //Log.e("DEBUG_MSG", ip);
-
-                int c = ClientLocation.MapCodeToCountry(ClientLocation.CountryCode(ip,context));
-                String countryNum = Integer.toString(c);
-                //Log.e("DEBUG_MSG", countryNum);
-
-                String written_ip = "0.0.0.0";
-                Util.writeToClientFile(country_code,countryNum,written_ip, Config.my_speed, context);
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Check which request we're responding to
+        if (requestCode == SETTINGS_REQUEST) {
+            // Make sure the request was successful
+            if (resultCode == RESULT_OK) {//settings was saved successfully
+                final Properties props = Util.getProperties(Config.getInfoFilePath(), this);
+                new CreateConnection(props).execute(1);
             }
+        }
+    }
 
-        }).start();
+    public boolean connect(Properties props){
+
+        String country_code = (String) props.get("country");
+
+        String ip = Util.returnIp();
+        //Log.e("DEBUG_MSG", ip);
+
+        int c = ClientLocation.MapCodeToCountry(ClientLocation.CountryCode(ip,this));
+        String countryNum = Integer.toString(c);
+        //Log.e("DEBUG_MSG", countryNum);
+
+        String written_ip = "0.0.0.0";
+        Util.writeToClientFile(country_code,countryNum,written_ip, Config.my_speed, this);
 
 
         return false;
     }
-    class FileAsync extends AsyncTask<Integer, Void, Void> {
-
+    class CreateConnection extends AsyncTask<Integer, Void, Void> {
+        private Properties props;
+        CreateConnection(Properties props){
+            this.props = props;
+        }
         protected Void doInBackground(Integer... params) {
+            connect(props);
             PasswordlessSSHManager.sftp_A2RS(ConnectActivity.this);
             startBrowser();
             return null;
+        }
 
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            dialog.cancel();
+            super.onPostExecute(aVoid);
         }
     }
 
     public void startBrowser(){
 
-        String url =  Util.readFromProxyFile(proxyFile);
+        String url =  Util.readFromProxyFile(proxyFile,this);
+
         Uri uriUrl = Uri.parse(url);
         Intent launchBrowser = new Intent(Intent.ACTION_VIEW, uriUrl);
         startActivity(launchBrowser);

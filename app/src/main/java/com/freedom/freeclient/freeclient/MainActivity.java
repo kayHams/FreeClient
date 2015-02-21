@@ -36,7 +36,7 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public void startApp(){
-
+        Config.initStorage(this);
         final Context context = this;
 
         final Button button = (Button) findViewById(R.id.BtnStart);
@@ -46,8 +46,8 @@ public class MainActivity extends ActionBarActivity {
         button.setOnClickListener(new OnClickListener(){
             @Override
             public void onClick(View v){
-                Intent settingsIntent = new Intent(context, ConnectActivity.class);
-                startActivity(settingsIntent);
+                Intent connectIntent = new Intent(context, ConnectActivity.class);
+                startActivity(connectIntent);
             }
         });
     }

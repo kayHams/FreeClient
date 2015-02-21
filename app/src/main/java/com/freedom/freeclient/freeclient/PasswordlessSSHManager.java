@@ -196,10 +196,10 @@ public static void sftp_A2RS(Context context)
         ChannelSftp c = (ChannelSftp) channel;
 
         //String fileName = "test.txt";
-        c.put(Config.getSendFile(context), "/home/" + Config.user + "/user_data");
+        c.put(Config.getSendFile(), "/home/" + Config.user + "/user_data");
         System.out.println("done");
         SystemClock.sleep(20000);
-        c.get("/home/" + Config.user + "/proxy_data/proxy.txt", Config.getSendFile(context));
+        c.get("/home/" + Config.user + "/proxy_data/proxy.txt", Config.getSendFile());
         c.exit();
         System.out.println("done");
         channel.disconnect();

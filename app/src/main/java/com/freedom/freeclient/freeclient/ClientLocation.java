@@ -29,12 +29,12 @@ public class ClientLocation {
                     context.getResources().getIdentifier("geoip",
                             "raw", context.getPackageName()));
 
-            if(!new File(Config.getStorageDir(context) + sep + "GeoIP.dat").exists()) {
-                Util.writeToFile(ins, Config.getStorageDir(context) + sep + "GeoIP.dat");
+            if(!new File(Config.getStorageDir() + sep + "GeoIP.dat").exists()) {
+                Util.writeToFile(ins, Config.getStorageDir() + sep + "GeoIP.dat",context);
             }
 
-            Log.i("PATH",Config.getStorageDir(context) + sep + "GeoIP.dat");
-            dbfile = Config.getStorageDir(context) + sep + "GeoIP.dat";
+            Log.i("PATH",Config.getStorageDir() + sep + "GeoIP.dat");
+            dbfile = Config.getStorageDir() + sep + "GeoIP.dat";
 
             LookupService cl = new LookupService(dbfile,LookupService.GEOIP_MEMORY_CACHE);
 
