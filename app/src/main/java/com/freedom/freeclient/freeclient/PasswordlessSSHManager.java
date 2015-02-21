@@ -1,6 +1,10 @@
 package com.freedom.freeclient.freeclient;
+import android.content.Context;
+import android.content.Intent;
+import android.os.SystemClock;
 import android.util.Log;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -9,6 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.freedom.freeclient.freeclient.util.Config;
+import com.freedom.freeclient.freeclient.util.Util;
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.ChannelSftp;
@@ -161,7 +166,7 @@ public String sendCommand(String command)
    return outputBuffer.toString();
 }
 
-public static void sftp_A2RS()
+public static void sftp_A2RS(Context context)
 {
     try {
         JSch jsch = new JSch();
@@ -169,7 +174,7 @@ public static void sftp_A2RS()
         int port = 22;
         //String privateKey = ".ssh/id_rsa";
 
-        jsch.addIdentity(Config.actualFile);
+        jsch.addIdentity(Config.getActualFile(context));
         System.out.println("identity added ");
 
         Session session = jsch.getSession(Config.user, Config.host, port);
@@ -191,7 +196,10 @@ public static void sftp_A2RS()
         ChannelSftp c = (ChannelSftp) channel;
 
         //String fileName = "test.txt";
-        c.put(Config.STORAGE_DIR + Config.sep + Config.SSH_FILE_NAME, ".");
+        c.put(Config.getSendFile(context), "/home/" + Config.user + "/user_data");
+        System.out.println("done");
+        SystemClock.sleep(20000);
+        c.get("/home/" + Config.user + "/proxy_data/proxy.txt", Config.getSendFile(context));
         c.exit();
         System.out.println("done");
         channel.disconnect();

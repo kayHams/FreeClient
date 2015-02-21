@@ -1,11 +1,15 @@
 package com.freedom.freeclient.freeclient;
 
+import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 import com.freedom.freeclient.freeclient.util.Config;
+import com.freedom.freeclient.freeclient.util.Util;
 import com.maxmind.geoip.*;
 
 /**
@@ -17,19 +21,24 @@ public class ClientLocation {
     private static String sep = System.getProperty("file.separator");
     //private static String dir = "~/AndroidStudioProjects/FreeClient2/GeoIP";
     //private static String path = Environment.getExternalStorageDirectory().getPath();
-    private static String dbfile = Config.STORAGE_DIR + sep + "GeoIP.dat";
-    public static String CountryCode(String ip){
-        Log.e("DEBUG_MSG","GOT HEREEEEEEEEEE2");
+    private static String dbfile;
+    public static String CountryCode(String ip, Context context){
         try {
 
-            //code = LookupService.getCountry(ip).getCode();
+            InputStream ins = context.getResources().openRawResource(
+                    context.getResources().getIdentifier("geoip",
+                            "raw", context.getPackageName()));
+
+            if(!new File(Config.getStorageDir(context) + sep + "GeoIP.dat").exists()) {
+                Util.writeToFile(ins, Config.getStorageDir(context) + sep + "GeoIP.dat");
+            }
+
+            Log.i("PATH",Config.getStorageDir(context) + sep + "GeoIP.dat");
+            dbfile = Config.getStorageDir(context) + sep + "GeoIP.dat";
 
             LookupService cl = new LookupService(dbfile,LookupService.GEOIP_MEMORY_CACHE);
 
             code = cl.getCountry(ip).getCode();
-
-            Log.e("DEBUG_MSG",code);
-
             cl.close();
         }
         catch (IOException e) {
@@ -42,8 +51,6 @@ public class ClientLocation {
     };
 
     public static int MapCodeToCountry(String code){
-
-        Log.e("DEBUG_MSG", "GOT HEREEEEEEEEEE3");
 
         String c = code, bj = "BJ", bf = "BF", cm ="CM", td = "TD", ci = "CI", dj ="DJ", fr = "FR", gq ="GQ", gm = "GM", gn = "GN", lr = "LR", nl ="NL", ng = "NG",no ="NO",sn = "SN", tg = "TG", ug = "UG", ga = "GA", cf = "CF",us ="US";
         if(c.equals(bj)){

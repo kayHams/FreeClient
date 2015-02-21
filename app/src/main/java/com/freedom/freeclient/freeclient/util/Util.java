@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -21,6 +22,7 @@ import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
+import java.util.Scanner;
 
 /**
  * Created by kemihambolu on 1/24/15.
@@ -28,11 +30,63 @@ import java.util.Properties;
 public class Util {
     static URL url;
     static String inputLine;
+    static String proxyUrl;
 
-    public static void writeToFile(String content, String filePath, boolean append) throws IOException {
-        OutputStreamWriter out = new OutputStreamWriter(
-                new FileOutputStream(
-                        new File(filePath)));
+    public static void writeToClientFile(String real_country, String choosen_country, String written_ip, String speed, Context context ){
+        File f = new File(Config.getSendFile(context));
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(f);
+            if(Config.isInternalStorage()){
+                fos = context.openFileOutput(f.getName(), Context.MODE_PRIVATE);
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+
+        OutputStreamWriter out = new OutputStreamWriter(fos);
+
+        try
+        {
+            f.createNewFile();
+
+            out.append(real_country + "+");
+            out.append(choosen_country + "+");
+            out.append(written_ip + "+");
+            out.append(speed);
+            out.close();
+            fos.close();
+        }catch (Exception e) {
+            e.printStackTrace();
+
+        }
+
+    }
+
+    public static String readFromProxyFile(File proxy){
+        try{
+
+            FileReader fr = new FileReader(proxy);
+            BufferedReader br = new BufferedReader(fr);
+
+            proxyUrl = br.readLine();
+            br.close();
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+
+        return proxyUrl;
+
+    }
+
+    public static void writeToFile(String content, String filePath, boolean append, Context context) throws IOException {
+        FileOutputStream fos =  new FileOutputStream(new File(filePath));
+
+        if(Config.isInternalStorage()){
+            fos = context.openFileOutput(new File(filePath).getName(), Context.MODE_PRIVATE);
+        }
+        OutputStreamWriter out = new OutputStreamWriter(fos);
 
         if(append){
             out.append(content);
@@ -42,7 +96,26 @@ public class Util {
         out.flush();
         out.close();
     }
-    public static Properties getProperties(String filename) {
+
+    public static void writeToFile(InputStream is, String outFile, Context context) throws IOException{
+        FileOutputStream fos =  new FileOutputStream(new File(outFile));
+
+
+        if(Config.isInternalStorage()){
+            fos = context.openFileOutput(new File(outFile).getName(), Context.MODE_PRIVATE);
+        }
+        OutputStreamWriter out = new OutputStreamWriter(fos);
+        int b = is.read();
+        while(b!=-1){
+            out.write(b);
+            b = is.read();
+        }
+
+        out.flush();
+        out.close();
+    }
+
+    public static Properties getProperties(String filename, Context context) {
         Properties properties = new Properties();
         try {
 
@@ -91,24 +164,5 @@ public class Util {
 
         return inputLine;
 
-    }
-
-    /* Checks if external storage is available for read and write */
-    public boolean isExternalStorageWritable() {
-        String state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state)) {
-            return true;
-        }
-        return false;
-    }
-
-    /* Checks if external storage is available to at least read */
-    public boolean isExternalStorageReadable() {
-        String state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state) ||
-                Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
-            return true;
-        }
-        return false;
     }
 }

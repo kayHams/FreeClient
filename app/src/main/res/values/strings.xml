@@ -19,5 +19,7 @@
 
     <string name="title_activity_connection_activity2">ConnectionActivity2</string>
     <string name="title_activity_connect">ConnectActivity</string>
+    <string name="title_activity_start_browser">StartBrowser</string>
+    <string name="title_activity_info">InfoActivity</string>
 
 </resources>

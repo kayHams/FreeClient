@@ -1,0 +1,90 @@
+package com.freedom.freeclient.freeclient.util;
+
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.AsyncTask;
+
+import com.freedom.freeclient.freeclient.ClientLocation;
+import com.freedom.freeclient.freeclient.PasswordlessSSHManager;
+
+import java.io.File;
+import java.util.Properties;
+
+/**
+ * Created by kemihambolu on 2/4/15.
+ */
+public class ConnectionManager {
+    private static ConnectionManager instance;
+    File proxyFile = new File(Config.STORAGE_DIR + Config.sep + "proxy.txt");
+    File clientFile = new File(Config.sendFile);
+    Context context;
+    private ConnectionManager(){
+
+    }
+
+    public static ConnectionManager getInstance(){
+        if(instance == null)
+            instance = new ConnectionManager();
+        return instance;
+    }
+
+    public boolean createConnection(Context context){
+        final Properties props = Util.getProperties(Config.INFO_FILE_PATH);
+        String country_code = (String) props.get("country");
+
+        String ip = Util.returnIp();
+        int c = ClientLocation.MapCodeToCountry(ClientLocation.CountryCode(ip));
+        String countryNum = Integer.toString(c);
+
+        String serveProxy = (String) props.get("proxy");
+
+        if (serveProxy == "yes") {
+            String written_ip = ip;
+            Util.writeToClientFile(country_code,countryNum,written_ip,Config.my_speed);
+        } else {
+            String written_ip = "0,0,0,0";
+            Util.writeToClientFile(country_code,countryNum,written_ip,Config.my_speed);
+        }
+
+        Intent i;
+        PackageManager manager = context.getPackageManager();
+        try {
+            i = manager.getLaunchIntentForPackage("org.xapek.andiodine");
+            if (i == null)
+                throw new PackageManager.NameNotFoundException();
+            i.addCategory(Intent.CATEGORY_LAUNCHER);
+            context.startActivity(i);
+            System.out.println("done");
+        } catch (PackageManager.NameNotFoundException e) {}
+
+        new FileAsync().execute(1);
+
+        return false;
+    }
+    class FileAsync extends AsyncTask<Integer, Void, Void> {
+        private ProgressDialog dialog;
+        @Override
+        protected void onPreExecute() {
+            dialog = ProgressDialog.show(context, "Please wait..", "Doing stuff..", true);
+        }
+
+        protected Void doInBackground(Integer... params) {
+                    PasswordlessSSHManager.sftp_A2RS();
+                    startBrowser();
+
+            return null;
+        }
+    }
+
+    public void startBrowser(){
+
+        String url =  Util.readFromProxyFile(proxyFile);
+        Uri uriUrl = Uri.parse(url);
+        Intent launchBrowser = new Intent(Intent.ACTION_VIEW, uriUrl);
+        context.startActivity(launchBrowser);
+
+    }
+}

@@ -3,6 +3,7 @@ package com.freedom.freeclient.freeclient;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.support.v7.app.ActionBarActivity;
@@ -39,6 +40,9 @@ public class MainActivity extends ActionBarActivity {
         final Context context = this;
 
         final Button button = (Button) findViewById(R.id.BtnStart);
+        // get the user information from connectionActivity
+
+
         button.setOnClickListener(new OnClickListener(){
             @Override
             public void onClick(View v){
