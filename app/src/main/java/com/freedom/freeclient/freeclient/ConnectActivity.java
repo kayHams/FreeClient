@@ -37,7 +37,7 @@ public class ConnectActivity extends ActionBarActivity {
         setContentView(R.layout.activity_connect);
 
 
-        final Properties props = Util.getProperties(Config.getInfoFilePath(), this);
+        final Properties props = Util.getProperties(Config.getInfoFilePath());
 
         // check if the user has entered their setting information, if not, go to settingsActivity, if yes, connect to iodine
         if(props.get("country") == null || props.get("country").equals("") ){
@@ -58,7 +58,7 @@ public class ConnectActivity extends ActionBarActivity {
         if (requestCode == SETTINGS_REQUEST) {
             // Make sure the request was successful
             if (resultCode == RESULT_OK) {//settings was saved successfully
-                final Properties props = Util.getProperties(Config.getInfoFilePath(), this);
+                final Properties props = Util.getProperties(Config.getInfoFilePath());
                 new CreateConnection(props).execute(1);
             }
         }
@@ -73,10 +73,10 @@ public class ConnectActivity extends ActionBarActivity {
 
         int c = ClientLocation.MapCodeToCountry(ClientLocation.CountryCode(ip,this));
         String countryNum = Integer.toString(c);
-        //Log.e("DEBUG_MSG", countryNum);
+        Log.i("DEBUG_MSG", countryNum);
 
         String written_ip = "0.0.0.0";
-        Util.writeToClientFile(country_code,countryNum,written_ip, Config.my_speed, this);
+        Util.writeToClientFile(country_code,countryNum,written_ip, Config.my_speed);
 
 
         return false;
@@ -102,12 +102,11 @@ public class ConnectActivity extends ActionBarActivity {
 
     public void startBrowser(){
 
-        String url =  Util.readFromProxyFile(proxyFile,this);
+        String url =  Util.readFromProxyFile(proxyFile);
 
         Uri uriUrl = Uri.parse(url);
         Intent launchBrowser = new Intent(Intent.ACTION_VIEW, uriUrl);
         startActivity(launchBrowser);
-
     }
 
 }

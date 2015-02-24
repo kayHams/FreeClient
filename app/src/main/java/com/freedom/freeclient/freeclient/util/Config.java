@@ -26,10 +26,7 @@ public class Config {
     private static boolean internalStorage = true;
     private static String storageDir;
     public static String getInfoFilePath(){
-        if(isInternalStorage()){
-            return getStorageDir() + sep  + INFO_FILE_NAME;
-        }
-        return getStorageDir() + sep + APP_DIR + sep  + INFO_FILE_NAME;
+        return getStorageDir() + sep  + INFO_FILE_NAME;
     }
 
     public static String getActualFile(Context context) {
@@ -42,7 +39,7 @@ public class Config {
 
         if(!new File(fStr).exists()){
             try {
-                Util.writeToFile(ins,Config.getStorageDir() + sep + fileName,context);
+                Util.writeToFile(ins,fStr);
             } catch (IOException e) {
                 e.printStackTrace();//USe android log here
             }
@@ -60,12 +57,14 @@ public class Config {
         String state = Environment.getExternalStorageState();
         if (Environment.MEDIA_MOUNTED.equals(state)) {
             internalStorage = false;
-            storageDir = Environment.getExternalStorageDirectory().getPath();
+            storageDir = Environment.getExternalStorageDirectory().getPath()+ sep + APP_DIR;
+        }else{
+            internalStorage = true;
+            //external not available so use internal
+            storageDir = context.getFilesDir().getPath() + sep + APP_DIR;
         }
+        new File(storageDir).mkdir();
 
-        internalStorage = true;
-        //external not available so use internal
-        storageDir = context.getFilesDir().getParentFile().getPath();
     }
     public static boolean isInternalStorage() {
         return internalStorage;

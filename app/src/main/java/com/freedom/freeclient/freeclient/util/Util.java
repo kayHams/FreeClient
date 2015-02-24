@@ -8,6 +8,8 @@ import android.widget.Toast;
 
 import com.freedom.freeclient.freeclient.MainActivity;
 
+import org.apache.commons.io.FileUtils;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,25 +32,13 @@ import java.util.Scanner;
 public class Util {
     static URL url;
     static String inputLine;
-    static String proxyUrl;
 
-    public static void writeToClientFile(String real_country, String chosen_country, String written_ip, String speed, Context context ){
+    public static void writeToClientFile(String real_country, String chosen_country, String written_ip, String speed){
         File f = new File(Config.getSendFile());
         FileOutputStream fos = null;
         try {
             fos = new FileOutputStream(f);
-            if(Config.isInternalStorage()){
-                fos = context.openFileOutput(f.getName(), Context.MODE_PRIVATE);
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
-
-        OutputStreamWriter out = new OutputStreamWriter(fos);
-
-        try
-        {
+            OutputStreamWriter out = new OutputStreamWriter(fos);
             f.createNewFile();
 
             out.append(real_country + "+");
@@ -57,22 +47,17 @@ public class Util {
             out.append(speed);
             out.close();
             fos.close();
-        }catch (Exception e) {
+        } catch (FileNotFoundException e ){
             e.printStackTrace();
-
+        }catch( IOException ex) {
+            ex.printStackTrace();
         }
 
     }
 
-    public static String readFromProxyFile(File proxy, Context context){
+    public static String readFromProxyFile(File proxy){
+        String proxyUrl="";
         try{
-
-            if(Config.isInternalStorage()){
-
-                Scanner in = new Scanner(context.openFileInput(proxy.getName()));
-                return in.nextLine();
-            }
-
             FileReader fr = new FileReader(proxy);
             BufferedReader br = new BufferedReader(fr);
 
@@ -85,12 +70,8 @@ public class Util {
         return proxyUrl;
     }
 
-    public static void writeToFile(String content, String filePath, boolean append, Context context) throws IOException {
+    public static void writeToFile(String content, String filePath, boolean append) throws IOException {
         FileOutputStream fos =  new FileOutputStream(new File(filePath));
-
-        if(Config.isInternalStorage()){
-            fos = context.openFileOutput(new File(filePath).getName(), Context.MODE_PRIVATE);
-        }
         OutputStreamWriter out = new OutputStreamWriter(fos);
 
         if(append){
@@ -102,45 +83,21 @@ public class Util {
         out.close();
     }
 
-    public static void writeToFile(InputStream is, String outFile, Context context) throws IOException{
-        FileOutputStream fos =  new FileOutputStream(new File(outFile));
-
-
-        if(Config.isInternalStorage()){
-            fos = context.openFileOutput(new File(outFile).getName(), Context.MODE_PRIVATE);
-        }
-        OutputStreamWriter out = new OutputStreamWriter(fos);
-        int b = is.read();
-        while(b!=-1){
-            out.write(b);
-            b = is.read();
-        }
-
-        out.flush();
-        out.close();
+    public static void writeToFile(InputStream is, String outFile) throws IOException{
+        FileUtils.copyInputStreamToFile(is, new File(outFile));
     }
 
-    public static Properties getProperties(String filename, Context context) {
+    public static Properties getProperties(String filename) {
         Properties properties = new Properties();
         try {
 
-            if(Config.isInternalStorage()){
-                File f = new File(filename);
-                context.openFileOutput(f.getName(), Context.MODE_PRIVATE);
-                properties.load(context.openFileInput(f.getName()));
-            }else{
-                File f = new File(filename);
+            File f = new File(filename);
 
-                if(!new File(f.getParent()).exists()){
-                    new File(f.getParent()).mkdir();
-                }
-
-                if(!f.exists()){
-                    writeToFile("",filename,false,context);
-                }
-
-                properties.load(new FileInputStream(f));
+            if(!f.exists()){
+                writeToFile("",filename,false);
             }
+
+            properties.load(new FileInputStream(f));
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -149,11 +106,7 @@ public class Util {
     }
 
     public static void saveProperties(Properties props, String filename, Context context) throws IOException, FileNotFoundException {
-        if(Config.isInternalStorage()){
-            props.store(context.openFileOutput(new File(filename).getName(), Context.MODE_PRIVATE),"");
-        }else{
-            props.store(new FileOutputStream(new File(filename)),"");
-        }
+        props.store(new FileOutputStream(new File(filename)),"");
     }
     public static String  returnIp() {
         try {

@@ -42,7 +42,6 @@ public class SettingsActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-
         try {
             initUI();
         } catch (Exception e) {
@@ -76,7 +75,7 @@ public class SettingsActivity extends ActionBarActivity {
         Country country = (Country) spinner.getSelectedItem();
         StringBuilder buf = new StringBuilder();
 
-        final Properties props = Util.getProperties(Config.getInfoFilePath(),this);
+        final Properties props = Util.getProperties(Config.getInfoFilePath());
         props.put("country", country.getId());
 
         new SaveAsync(props).execute();

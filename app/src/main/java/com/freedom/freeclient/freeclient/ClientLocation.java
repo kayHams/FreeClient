@@ -24,27 +24,26 @@ public class ClientLocation {
     private static String dbfile;
     public static String CountryCode(String ip, Context context){
         try {
-
+            Log.i("INFO","IP = "+ ip);
             InputStream ins = context.getResources().openRawResource(
                     context.getResources().getIdentifier("geoip",
                             "raw", context.getPackageName()));
-
-            if(!new File(Config.getStorageDir() + sep + "GeoIP.dat").exists()) {
-                Util.writeToFile(ins, Config.getStorageDir() + sep + "GeoIP.dat",context);
+            dbfile = Config.getStorageDir() + sep + "GeoIP.dat";
+            if(!new File(dbfile).exists()) {
+                Util.writeToFile(ins, dbfile);
+                //Files.copy();
             }
 
             Log.i("PATH",Config.getStorageDir() + sep + "GeoIP.dat");
-            dbfile = Config.getStorageDir() + sep + "GeoIP.dat";
 
             LookupService cl = new LookupService(dbfile,LookupService.GEOIP_MEMORY_CACHE);
 
             code = cl.getCountry(ip).getCode();
+            Log.i("INFO: ","CODE======="+code);
             cl.close();
         }
         catch (IOException e) {
             System.err.println("An IOException was caught :"+e.getMessage());
-           // System.out.println("IO Exception");
-            //e.getMessage();
         }
         return code;
 
