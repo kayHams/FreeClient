@@ -99,6 +99,9 @@ public class SettingsActivity extends ActionBarActivity {
         protected void onPostExecute(Void aVoid) {
             setResult(RESULT_OK, getIntent());
             finish();
+            Intent ConnectIntent = new Intent(context, ConnectActivity.class);
+            startActivity(ConnectIntent);
+            SettingsActivity.this.finish();
         }
     }
     @Override

@@ -66,6 +66,21 @@ public class Util {
         }catch(IOException e){
             e.printStackTrace();
         }
+        return proxyUrl;
+    }
+    public static String readFromProxyFile1(File proxy){
+        String proxyUrl="";
+        try{
+            FileReader fr = new FileReader(proxy);
+            BufferedReader br = new BufferedReader(fr);
+            for(int i = 0; i < 1; ++i)
+                br.readLine();
+            proxyUrl = br.readLine();
+            br.close();
+
+        }catch(IOException e){
+            e.printStackTrace();
+        }
 
         return proxyUrl;
     }
@@ -107,30 +122,5 @@ public class Util {
 
     public static void saveProperties(Properties props, String filename, Context context) throws IOException, FileNotFoundException {
         props.store(new FileOutputStream(new File(filename)),"");
-    }
-    public static String  returnIp() {
-        try {
-            URL url = new URL("http://curlmyip.com/");
-            // get URL content
-            // open the stream and put it into BufferedReader
-            BufferedReader br = new BufferedReader(
-                    new InputStreamReader(url.openStream()));
-
-
-            inputLine = br.readLine();
-            //ipText.setText(inputLine);
-            Log.d("DEBUG_MSG",inputLine);
-
-
-            br.close();
-
-        } catch (MalformedURLException e1) {
-            e1.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return inputLine;
-
     }
 }

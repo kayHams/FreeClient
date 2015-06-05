@@ -5,45 +5,45 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="com.freedom.freeclient.freeclient.SettingsActivity"
+    android:background="#f0f02f1d">
     >
 
-    <TextView android:text="User Info" android:layout_width="wrap_content"
+    <TextView android:text="HOME COUNTRY" android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="40dp"
-        android:id="@+id/textView" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="info"
-        android:id="@+id/helpBtn"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:textStyle="bold|italic"
+        android:textSize="30dp"
+        android:typeface="monospace"
+        android:id="@+id/textView"
+        android:padding="5dp"
+        android:autoText="false"
+        android:password="false"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Select Your Home Country"
+        android:text="Tap The Paw To Select"
+        android:textStyle="italic"
         android:id="@+id/textView2"
-        android:layout_marginTop="29dp"
-        android:layout_below="@+id/textView"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:padding="5dp"
+        android:autoText="false"
+        android:textColor="#fffff5f4"
+        android:layout_above="@+id/countryDropDown"
+        android:layout_centerHorizontal="true" />
 
     <Spinner
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/countryDropDown"
+        android:background="@drawable/tigerpaw"
         android:spinnerMode="dropdown"
+        android:layout_above="@+id/saveBtn"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/textView2"
-        android:minHeight="200dp"
-        />
-
-
+        android:layout_marginBottom="62dp" />
 
     <Button
         android:layout_width="wrap_content"
@@ -51,21 +51,26 @@
         android:text="Save"
         android:id="@+id/saveBtn"
         android:onClick="onSaveSetting"
-        android:layout_above="@+id/helpBtn"
+        android:textStyle="bold|italic"
+        android:textColor="#ffffffff"
+        android:background="#ff0099cc"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_alignParentBottom="true"
         android:layout_alignRight="@+id/countryDropDown"
         android:layout_alignEnd="@+id/countryDropDown" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="cancel"
+        android:text="Cancel"
         android:id="@+id/cancelBtn"
-        android:layout_above="@+id/helpBtn"
-        android:layout_alignRight="@+id/textView"
-        android:layout_alignEnd="@+id/textView"
-        android:layout_marginRight="33dp"
-        android:layout_marginEnd="33dp" />
-
-
+        android:textStyle="bold|italic"
+        android:textColor="#ffffffff"
+        android:background="#ff0099cc"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_alignParentBottom="true"
+        android:layout_alignTop="@+id/saveBtn"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
 </RelativeLayout>

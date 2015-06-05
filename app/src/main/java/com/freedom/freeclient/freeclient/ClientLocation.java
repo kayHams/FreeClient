@@ -16,38 +16,8 @@ import com.maxmind.geoip.*;
  * Created by kemihambolu on 1/24/15.
  */
 public class ClientLocation {
-    private static String code;
     private static int number;
     private static String sep = System.getProperty("file.separator");
-    //private static String dir = "~/AndroidStudioProjects/FreeClient2/GeoIP";
-    //private static String path = Environment.getExternalStorageDirectory().getPath();
-    private static String dbfile;
-    public static String CountryCode(String ip, Context context){
-        try {
-            Log.i("INFO","IP = "+ ip);
-            InputStream ins = context.getResources().openRawResource(
-                    context.getResources().getIdentifier("geoip",
-                            "raw", context.getPackageName()));
-            dbfile = Config.getStorageDir() + sep + "GeoIP.dat";
-            if(!new File(dbfile).exists()) {
-                Util.writeToFile(ins, dbfile);
-                //Files.copy();
-            }
-
-            Log.i("PATH",Config.getStorageDir() + sep + "GeoIP.dat");
-
-            LookupService cl = new LookupService(dbfile,LookupService.GEOIP_MEMORY_CACHE);
-
-            code = cl.getCountry(ip).getCode();
-            Log.i("INFO: ","CODE======="+code);
-            cl.close();
-        }
-        catch (IOException e) {
-            System.err.println("An IOException was caught :"+e.getMessage());
-        }
-        return code;
-
-    };
 
     public static int MapCodeToCountry(String code){
 

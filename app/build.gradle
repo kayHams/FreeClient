@@ -32,7 +32,13 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    //compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:21.0.3'
     compile 'commons-io:commons-io:2.4'
+    /*compile files ('libs/geoip2-2.1.0.jar')
+    compile files ('libs/geoip-api-1.2.10.jar')
+    compile files ('libs/com.jcraft.jsch_0.1.31.jar')
+    compile files ('libs/ipgeomap_2.9.1-0.1-SNAPSHOT.jar')*/
+    compile 'com.maxmind.geoip:geoip-api:1.2.14'
+    compile 'com.jcraft:jsch:0.1.52'
 }

@@ -14,14 +14,13 @@ import java.io.InputStream;
 public class Config {
     public static final String my_speed = "0";
     public static String sep = System.getProperty("file.separator");
-    public static final String REAL_DOMAIN_FILE = "domain.txt";
     public static final String SSH_FILE_NAME = "client_info.txt";
     public static final String INFO_FILE_NAME = "option.props";
-    public static final String SPEEED_FILE_NAME = "speed.txt";
+    public static final String PROXY_FILE_NAME = "proxy.txt";
     public static final String APP_DIR="freeclient";
     public static final String fileName = "id_rsa";
-    public static final String domainName = "ifserver.crabdance.com";
-    public final static String user = "QL0";
+    public static final String certName = "certreq.csr";
+    public final static String user = "POW";
     public final static String host = "192.168.99.1";
     private static boolean internalStorage = true;
     private static String storageDir;
@@ -41,7 +40,7 @@ public class Config {
             try {
                 Util.writeToFile(ins,fStr);
             } catch (IOException e) {
-                e.printStackTrace();//USe android log here
+                e.printStackTrace();
             }
         }
         return getStorageDir() + sep  + fileName;
@@ -49,6 +48,9 @@ public class Config {
 
     public static String getSendFile() {
         return getStorageDir() + sep  + SSH_FILE_NAME;
+    }
+    public static String getProxyFile() {
+        return getStorageDir() + sep  + PROXY_FILE_NAME;
     }
     public static String getStorageDir(){
        return storageDir;
